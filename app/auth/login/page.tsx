@@ -32,10 +32,7 @@ export default async function LoginPage({
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-6 md:mb-8">
-            <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao início
-            </Link>
+            
             <div className="flex items-center justify-center gap-3 mb-3 md:mb-4">
               <img src="/logo-pt.png" alt="PT RJ" className="w-24 h-24 md:w-28 md:h-28 object-contain" />
             </div>

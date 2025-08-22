@@ -50,48 +50,48 @@ export async function YouthEvents() {
             const share = buildShareUrls(event)
             return (
               <div key={idx} className="border-l-4 border-red-600 pl-4 py-3 bg-red-50 rounded-r-lg">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800 mb-1">{event.title}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{event.description}</p>
-                  </div>
-                  <div className="flex gap-2 ml-4">
-                    <Badge className={getCategoryColor(event.category)}>{event.category}</Badge>
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-800 mb-1">{event.title}</h3>
+                  <p className="text-sm text-gray-600 mb-3">{event.description}</p>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <Badge className={getCategoryColor(event.category)}>{event.category}</Badge>
                     <Badge className={getTypeColor(event.event_type)}>{event.event_type}</Badge>
                   </div>
-                </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Calendar className="h-4 w-4" />
                       {new Date(event.event_date).toLocaleDateString("pt-BR")}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Clock className="h-4 w-4" />
                       {new Date(event.event_date).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
                     </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    {event.location}
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin className="h-4 w-4" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Users className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Users className="h-4 w-4" />
                       {event.participants}/{event.max_participants} participantes
                     </div>
-                  </div>
                 </div>
+              </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-gray-500">Organizado por {event.organizer}</div>
-                  <div className="flex gap-2">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-gray-500">Organizado por {event.organizer}</div>
+                <div className="flex gap-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="bg-transparent">
+                  <Button variant="outline" size="sm" className="bg-transparent">
                           <Share2 className="h-4 w-4 mr-1" /> Compartilhar
-                        </Button>
+                  </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild><a href={share.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a></DropdownMenuItem>
@@ -102,16 +102,16 @@ export async function YouthEvents() {
                     </DropdownMenu>
                     <Button asChild size="sm" className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
                       <Link href={`/youth/events/${event.id}`}>Participar</Link>
-                    </Button>
-                  </div>
+                  </Button>
                 </div>
+              </div>
 
-                <div className="mt-3">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
+              <div className="mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
                       className="bg-gradient-to-r from-red-500 to-red-700 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${(event.participants / (event.max_participants || 1)) * 100}%` }}
-                    ></div>
+                  ></div>
                   </div>
                 </div>
               </div>

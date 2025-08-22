@@ -125,9 +125,9 @@ export default async function PointsPage() {
               <div className="pt-2 flex flex-wrap gap-2">
                 <Button asChild size="sm" variant="outline" className="border-red-600 text-red-600"> <Link href="/youth">Eventos/Grupos</Link></Button>
                 <Button asChild size="sm" variant="outline" className="border-red-600 text-red-600"> <Link href="/courses">Cursos</Link></Button>
-              </div>
-            </CardContent>
-          </Card>
+                      </div>
+                    </CardContent>
+                  </Card>
 
           {/* Top 5 */}
           <Card className="border-red-200 overflow-hidden">
@@ -145,9 +145,9 @@ export default async function PointsPage() {
                       <div className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-red-300">{getInitials(u.full_name)}</div>
                     )}
                     <span className="truncate text-gray-800 text-sm">{u.full_name || 'Usuário'}</span>
-                  </div>
+                        </div>
                   <div className="text-red-700 text-sm font-semibold">{u.points || 0} pts</div>
-                </div>
+                    </div>
               ))}
               {(!top || top.length === 0) && (<div className="text-xs text-gray-600">Sem dados.</div>)}
             </CardContent>
@@ -157,7 +157,7 @@ export default async function PointsPage() {
           <Card className="md:col-span-1 md:col-start-1 border-red-200 overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
               <CardTitle>Histórico</CardTitle>
-            </CardHeader>
+              </CardHeader>
             <CardContent className="p-4 bg-white/70 divide-y text-sm text-gray-800">
               {(txs || []).map((t: any) => (
                 <div key={t.id} className="flex items-center justify-between py-2">
@@ -168,8 +168,8 @@ export default async function PointsPage() {
               {(!txs || txs.length === 0) && (
                 <div className="text-xs text-gray-600">Sem lançamentos ainda.</div>
               )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
         </div>
       </div>
     </div>
