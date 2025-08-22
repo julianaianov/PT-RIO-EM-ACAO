@@ -37,10 +37,7 @@ export default async function SignUpPage({
               Voltar ao início
             </Link>
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-lg font-bold">PT</span>
-              </div>
-              <h1 className="text-3xl font-bold text-red-800">PT RJ</h1>
+              <img src="/logo-pt.png" alt="PT RJ" className="w-16 h-16 md:w-20 md:h-20 object-contain" />
             </div>
             <p className="text-gray-600">Junte-se à nossa luta</p>
           </div>
@@ -132,7 +129,7 @@ export default async function SignUpPage({
           </Card>
 
           <div className="mt-8 text-center text-sm text-gray-500">
-            <p>© 2024 Partido dos Trabalhadores - Rio de Janeiro</p>
+            <p>Poder Popular - Rio de Janeiro</p>
           </div>
         </div>
       </div>

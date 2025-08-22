@@ -1,235 +1,176 @@
-"use client"
+import { createClient } from "@/lib/supabase/server"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import BackButton from "@/components/back-button"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Trophy, TrendingUp, CheckCircle2, School, Vote } from "lucide-react"
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Star, Users, Calendar, BookOpen, Share2, UserPlus, Target, Gift, Award } from "lucide-react"
+function getInitials(name?: string) {
+  if (!name) return "?"
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part: string) => part[0] || "")
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
+}
 
-const MILITANT_LEVELS = [
-  {
-    id: 1,
-    name: "Militante Iniciante",
-    icon: "🌱",
-    minPoints: 0,
-    maxPoints: 99,
-    title: "Base Ativa",
-    benefits: ["Acesso básico a cursos e agenda"],
-  },
-  {
-    id: 2,
-    name: "Mobilizador de Bairro",
-    icon: "🌿",
-    minPoints: 100,
-    maxPoints: 249,
-    title: "Mobilizador",
-    benefits: ["Prioridade na inscrição de eventos locais"],
-  },
-  {
-    id: 3,
-    name: "Formador Popular",
-    icon: "🌳",
-    minPoints: 250,
-    maxPoints: 499,
-    title: "Formador",
-    benefits: ["Participa de reuniões ampliadas do núcleo"],
-  },
-  {
-    id: 4,
-    name: "Referência de Base",
-    icon: "🔥",
-    minPoints: 500,
-    maxPoints: 999,
-    title: "Líder Local",
-    benefits: ["Acesso a encontros regionais e destaque no app"],
-  },
-  {
-    id: 5,
-    name: "Militante do Ano",
-    icon: "⭐",
-    minPoints: 1000,
-    maxPoints: 9999,
-    title: "Companheiro Destaque",
-    benefits: ["Camiseta ou kit oficial + convite para evento estadual"],
-  },
-]
+function getLevel(points: number) {
+  if (points >= 500) return { name: "Líder", nextAt: 1000 }
+  if (points >= 250) return { name: "Avançado", nextAt: 500 }
+  if (points >= 100) return { name: "Intermediário", nextAt: 250 }
+  return { name: "Iniciante", nextAt: 100 }
+}
 
-const POINT_ACTIONS = [
-  { action: "Participar de evento presencial", points: 20, icon: Calendar },
-  { action: "Confirmar presença e comparecer a plenária", points: 15, icon: Users },
-  { action: "Concluir curso online de formação", points: 30, icon: BookOpen },
-  { action: "Compartilhar evento oficial nas redes sociais", points: 10, icon: Share2 },
-  { action: "Trazer um novo filiado", points: 40, icon: UserPlus },
-  { action: "Participar de missão semanal", points: 25, icon: Target },
-  { action: 'Criar proposta aprovada no "Espaço Juventude"', points: 35, icon: Star },
-  { action: "Fazer doação voluntária", points: 15, icon: Gift },
-]
+export default async function PointsPage() {
+  const supabase = await createClient()
+  const { data: auth } = await supabase.auth.getUser()
+  const me = auth.user
 
-export default function PointsPage() {
-  const [userPoints, setUserPoints] = useState(245) // Mock data
-  const [recentActions, setRecentActions] = useState([
-    { id: 1, action: 'Concluiu curso "História do PT"', points: 30, date: "2024-01-15" },
-    { id: 2, action: 'Participou do evento "Plenária Municipal"', points: 20, date: "2024-01-14" },
-    { id: 3, action: "Compartilhou evento nas redes sociais", points: 10, date: "2024-01-13" },
-  ])
+  const { data: profile } = me
+    ? await supabase.from("profiles").select("id, full_name, avatar_url, points").eq("id", me.id).single()
+    : { data: null as any }
 
-  const getCurrentLevel = (points: number) => {
-    return MILITANT_LEVELS.find((level) => points >= level.minPoints && points <= level.maxPoints) || MILITANT_LEVELS[0]
-  }
+  const myPoints = Number(profile?.points || 0)
+  const level = getLevel(myPoints)
 
-  const getNextLevel = (points: number) => {
-    const currentLevelIndex = MILITANT_LEVELS.findIndex(
-      (level) => points >= level.minPoints && points <= level.maxPoints,
-    )
-    return currentLevelIndex < MILITANT_LEVELS.length - 1 ? MILITANT_LEVELS[currentLevelIndex + 1] : null
-  }
+  const { count: ahead } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .gt("points", myPoints)
 
-  const currentLevel = getCurrentLevel(userPoints)
-  const nextLevel = getNextLevel(userPoints)
-  const progressToNext = nextLevel
-    ? ((userPoints - currentLevel.minPoints) / (nextLevel.minPoints - currentLevel.minPoints)) * 100
-    : 100
+  const { count: total } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+
+  const myRank = typeof ahead === "number" ? ahead + 1 : undefined
+
+  const { data: txs } = me
+    ? await supabase
+        .from("point_transactions")
+        .select("id, Delta, reason, created_at")
+        .eq("user_id", me.id)
+        .order("created_at", { ascending: false })
+        .limit(20)
+    : { data: [] as any[] }
+
+  const { data: top } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url, points")
+    .order("points", { ascending: false })
+    .limit(5)
+
+  const progressPct = Math.min(100, Math.round((myPoints / level.nextAt) * 100))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-red-800">Sistema de Pontos PT RJ</h1>
-          <p className="text-red-600">Reconhecendo seu engajamento e militância</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828]">
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-4 text-white"><BackButton fallback="/" /></div>
+        <h1 className="text-2xl font-bold text-white mb-4">Meus Pontos</h1>
 
-        {/* Current Status Card */}
-        <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <div className="text-6xl mb-2">{currentLevel.icon}</div>
-            <CardTitle className="text-2xl text-red-800">{currentLevel.name}</CardTitle>
-            <CardDescription className="text-lg font-medium text-red-600">
-              {currentLevel.title} • {userPoints} pontos
-            </CardDescription>
+        {/* Summary */}
+        <Card className="mb-6 border-red-200 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+            <CardTitle className="flex items-center gap-2"><Trophy className="h-5 w-5" /> Seu Desempenho</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {nextLevel && (
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Progresso para {nextLevel.name}</span>
-                  <span>{nextLevel.minPoints - userPoints} pontos restantes</span>
+          <CardContent className="p-4 bg-white/70">
+            {!me ? (
+              <div className="flex items-center justify-between">
+                <div className="text-gray-700">Faça login para ver seus pontos e histórico.</div>
+                <Button asChild className="bg-red-600 hover:bg-red-700"><Link href="/auth/login">Entrar</Link></Button>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt={profile.full_name || 'Usuário'} className="w-14 h-14 rounded-full object-cover ring-2 ring-red-400" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center font-bold ring-2 ring-red-400">{getInitials(profile?.full_name)}</div>
+                  )}
+                  <div>
+                    <div className="font-semibold text-gray-800">{profile?.full_name || 'Usuário'}</div>
+                    <div className="text-sm text-gray-600">Nível: {level.name}</div>
+                  </div>
                 </div>
-                <Progress value={progressToNext} className="h-3" />
+                <div className="md:text-center">
+                  <div className="text-3xl font-extrabold text-red-700">{myPoints} pts</div>
+                  <div className="text-xs text-gray-600">Meta: {level.nextAt} pts</div>
+                  <div className="h-2 mt-2 bg-red-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-red-500 to-red-700" style={{ width: `${progressPct}%` }} />
+                  </div>
+                </div>
+                <div className="md:text-right">
+                  <div className="flex md:justify-end items-center gap-2 text-gray-700"><TrendingUp className="h-4 w-4" /> Ranking: {myRank ? `#${myRank} de ${total || '-'}` : '-'}</div>
+                  <div className="mt-2 flex gap-2 justify-end">
+                    <Button asChild size="sm" className="bg-red-600 hover:bg-red-700"><Link href="/ranking">Ver Ranking</Link></Button>
+                    <Button asChild size="sm" variant="outline" className="border-red-600 text-red-600"><Link href="/youth">Ir para Juventude</Link></Button>
+                  </div>
+                </div>
               </div>
             )}
-
-            <div className="bg-red-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-red-800 mb-2">Seus Benefícios Atuais:</h4>
-              <ul className="space-y-1">
-                {currentLevel.benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-center gap-2 text-red-700">
-                    <Award className="h-4 w-4" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="actions" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="actions">Como Ganhar Pontos</TabsTrigger>
-            <TabsTrigger value="levels">Níveis de Militante</TabsTrigger>
-            <TabsTrigger value="history">Histórico</TabsTrigger>
-          </TabsList>
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Ways to earn */}
+          <Card className="border-red-200 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+              <CardTitle>Como ganhar pontos</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 bg-white/70 space-y-3 text-sm text-gray-700">
+              <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-red-600" /> Confirmar presença em eventos (+5)</div>
+              <div className="flex items-center gap-2"><School className="h-4 w-4 text-red-600" /> Concluir cursos (+10 ou conforme curso)</div>
+              <div className="flex items-center gap-2"><Vote className="h-4 w-4 text-red-600" /> Votar em enquetes de grupos (+1)</div>
+              <div className="pt-2 flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="outline" className="border-red-600 text-red-600"> <Link href="/youth">Eventos/Grupos</Link></Button>
+                <Button asChild size="sm" variant="outline" className="border-red-600 text-red-600"> <Link href="/courses">Cursos</Link></Button>
+              </div>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="actions" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              {POINT_ACTIONS.map((item, index) => {
-                const Icon = item.icon
-                return (
-                  <Card key={index} className="border-red-200 hover:border-red-300 transition-colors">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-red-100 rounded-lg">
-                          <Icon className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{item.action}</p>
-                          <Badge variant="secondary" className="bg-red-100 text-red-800">
-                            +{item.points} pontos
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="levels" className="space-y-4">
-            <div className="space-y-4">
-              {MILITANT_LEVELS.map((level) => (
-                <Card
-                  key={level.id}
-                  className={`border-2 ${
-                    userPoints >= level.minPoints && userPoints <= level.maxPoints
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-200"
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="text-4xl">{level.icon}</div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900">{level.name}</h3>
-                        <p className="text-red-600 font-medium">{level.title}</p>
-                        <p className="text-sm text-gray-600">
-                          {level.minPoints} - {level.maxPoints === 9999 ? "∞" : level.maxPoints} pontos
-                        </p>
-                        <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-700 mb-1">Benefícios:</p>
-                          <ul className="text-sm text-gray-600 space-y-1">
-                            {level.benefits.map((benefit, index) => (
-                              <li key={index} className="flex items-center gap-1">
-                                <Award className="h-3 w-3" />
-                                {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      {userPoints >= level.minPoints && userPoints <= level.maxPoints && (
-                        <Badge className="bg-red-600 text-white">Atual</Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="history" className="space-y-4">
-            <Card className="border-red-200">
-              <CardHeader>
-                <CardTitle className="text-red-800">Atividades Recentes</CardTitle>
-                <CardDescription>Suas últimas ações que geraram pontos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {recentActions.map((activity) => (
-                    <div key={activity.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">{activity.action}</p>
-                        <p className="text-sm text-gray-600">{activity.date}</p>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800">+{activity.points} pontos</Badge>
-                    </div>
-                  ))}
+          {/* Top 5 */}
+          <Card className="border-red-200 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+              <CardTitle>Top 5</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 bg-white/70 divide-y">
+              {(top || []).map((u, i) => (
+                <div key={u.id} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-5 text-xs text-gray-500 text-right">{i+1}</span>
+                    {u.avatar_url ? (
+                      <img src={u.avatar_url} alt={u.full_name || 'Usuário'} className="w-7 h-7 rounded-full object-cover ring-1 ring-red-300" />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold ring-1 ring-red-300">{getInitials(u.full_name)}</div>
+                    )}
+                    <span className="truncate text-gray-800 text-sm">{u.full_name || 'Usuário'}</span>
+                  </div>
+                  <div className="text-red-700 text-sm font-semibold">{u.points || 0} pts</div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              ))}
+              {(!top || top.length === 0) && (<div className="text-xs text-gray-600">Sem dados.</div>)}
+            </CardContent>
+          </Card>
+
+          {/* History */}
+          <Card className="md:col-span-1 md:col-start-1 border-red-200 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+              <CardTitle>Histórico</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 bg-white/70 divide-y text-sm text-gray-800">
+              {(txs || []).map((t: any) => (
+                <div key={t.id} className="flex items-center justify-between py-2">
+                  <div className="truncate">{t.reason || 'Ajuste'}</div>
+                  <div className={`${t.Delta >= 0 ? 'text-green-700' : 'text-red-700'} font-semibold`}>{t.Delta >= 0 ? `+${t.Delta}` : t.Delta} pts</div>
+                </div>
+              ))}
+              {(!txs || txs.length === 0) && (
+                <div className="text-xs text-gray-600">Sem lançamentos ainda.</div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

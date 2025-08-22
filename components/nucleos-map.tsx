@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, MessageCircle, Send, Phone } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 interface Nucleo {
   id: string
@@ -42,11 +42,19 @@ export default function NucleosMap({ nucleos }: NucleosMapProps) {
   ]
 
   // Assign mock coordinates to nucleos that don't have them
-  const nucleosWithCoords = nucleos.map((nucleo, index) => ({
-    ...nucleo,
-    latitude: nucleo.latitude || mockCoordinates[index % mockCoordinates.length]?.lat || -22.9068,
-    longitude: nucleo.longitude || mockCoordinates[index % mockCoordinates.length]?.lng || -43.1729,
-  }))
+  const nucleosWithCoords = useMemo(
+    () =>
+      nucleos.map((nucleo, index) => ({
+        ...nucleo,
+        latitude: nucleo.latitude || mockCoordinates[index % mockCoordinates.length]?.lat || -22.9068,
+        longitude: nucleo.longitude || mockCoordinates[index % mockCoordinates.length]?.lng || -43.1729,
+      })),
+    [nucleos]
+  )
+
+  const center = selectedNucleo || nucleosWithCoords[0]
+  const lat = center?.latitude ?? -22.9068
+  const lng = center?.longitude ?? -43.1729
 
   return (
     <div className="space-y-6">
@@ -54,42 +62,15 @@ export default function NucleosMap({ nucleos }: NucleosMapProps) {
       <Card>
         <CardContent className="p-0">
           <div className="relative h-96 bg-muted rounded-lg overflow-hidden">
-            {/* Mock Map Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                <p className="text-muted-foreground">Mapa Interativo dos Núcleos PT RJ</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Clique nos pins abaixo para ver informações dos núcleos
-                </p>
-              </div>
-            </div>
-
-            {/* Mock Map Pins */}
-            <div className="absolute inset-0">
-              {nucleosWithCoords.map((nucleo, index) => {
-                const x = ((nucleo.longitude + 43.3) / 0.4) * 100 // Convert lng to percentage
-                const y = ((nucleo.latitude + 23.1) / 0.4) * 100 // Convert lat to percentage
-
-                return (
-                  <button
-                    key={nucleo.id}
-                    className={`absolute w-6 h-6 rounded-full border-2 border-white shadow-lg transition-all hover:scale-110 ${
-                      selectedNucleo?.id === nucleo.id ? "bg-primary scale-110" : "bg-red-500"
-                    }`}
-                    style={{
-                      left: `${Math.max(5, Math.min(95, x))}%`,
-                      top: `${Math.max(5, Math.min(95, 100 - y))}%`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                    onClick={() => setSelectedNucleo(nucleo)}
-                    title={nucleo.name}
-                  >
-                    <MapPin className="h-4 w-4 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                  </button>
-                )
-              })}
-            </div>
+            {/* Real Map Embed */}
+            <iframe
+              key={`${lat},${lng}`}
+              title="Mapa dos Núcleos"
+              src={`https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`}
+              className="absolute inset-0 w-full h-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </CardContent>
       </Card>
@@ -170,9 +151,9 @@ export default function NucleosMap({ nucleos }: NucleosMapProps) {
       {/* Nucleos List for Map */}
       <Card>
         <CardContent className="pt-6">
-          <h3 className="font-semibold mb-4">Núcleos Disponíveis ({nucleos.length})</h3>
+          <h3 className="font-semibold mb-4">Núcleos Disponíveis ({nucleosWithCoords.length})</h3>
           <div className="grid md:grid-cols-2 gap-3">
-            {nucleos.map((nucleo) => (
+            {nucleosWithCoords.map((nucleo) => (
               <button
                 key={nucleo.id}
                 className={`text-left p-3 rounded-lg border transition-colors hover:bg-muted ${

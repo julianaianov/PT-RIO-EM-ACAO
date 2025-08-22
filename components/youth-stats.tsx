@@ -6,9 +6,9 @@ export function YouthStats() {
     {
       icon: Users,
       value: "1,247",
-      label: "Jovens Ativos",
+      label: "Membros Ativos",
       change: "+12%",
-      color: "text-orange-600",
+      color: "text-red-600",
     },
     {
       icon: Calendar,

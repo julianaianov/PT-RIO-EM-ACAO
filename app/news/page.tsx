@@ -4,6 +4,7 @@ import NewsFilters from "@/components/news-filters"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
+import BackButton from "@/components/back-button"
 
 interface SearchParams {
   category?: string
@@ -57,6 +58,7 @@ export default async function NewsPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6"><BackButton /></div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Notícias e Comunicação</h1>

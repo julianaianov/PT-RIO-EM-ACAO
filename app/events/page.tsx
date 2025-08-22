@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import EventsList from "@/components/events-list"
 import EventFilters from "@/components/event-filters"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 interface SearchParams {
@@ -59,6 +59,14 @@ export default async function EventsPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <Button variant="ghost" asChild>
+          <Link href="/">
+            <ArrowLeft className="h-4 w-4 mr-2" /> Voltar
+          </Link>
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Agenda de Eventos</h1>
@@ -66,11 +74,8 @@ export default async function EventsPage({
         </div>
 
         {userProfile?.role === "coordinator" || userProfile?.role === "admin" ? (
-          <Button asChild>
-            <Link href="/events/create">
-              <Plus className="h-4 w-4 mr-2" />
-              Criar Evento
-            </Link>
+          <Button asChild className="bg-red-600 hover:bg-red-700">
+            <Link href="/events/create">Novo Evento</Link>
           </Button>
         ) : null}
       </div>

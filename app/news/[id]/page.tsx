@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, User, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import NewsShare from "@/components/news-share"
+import LinkPreview from "@/components/link-preview"
 
 export default async function NewsDetailPage({
   params,
@@ -44,6 +45,15 @@ export default async function NewsDetailPage({
     formation: "bg-purple-100 text-purple-800",
     general: "bg-gray-100 text-gray-800",
   }
+
+  // Extract links list from content block if present (lines after "Links:")
+  const linksSectionIndex = news.content?.indexOf("\n\nLinks:\n") ?? -1
+  const linksListRaw =
+    linksSectionIndex >= 0 ? news.content.slice(linksSectionIndex + "\n\nLinks:\n".length).trim() : ""
+  const linksArray = linksListRaw
+    .split(/\r?\n/)
+    .map((s: string) => s.trim())
+    .filter((s: string) => s.startsWith("http"))
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,8 +140,18 @@ export default async function NewsDetailPage({
 
             {/* Content */}
             <div className="prose max-w-none mb-8">
-              <div className="text-lg leading-relaxed whitespace-pre-wrap">{news.content}</div>
+              <div className="text-lg leading-relaxed whitespace-pre-wrap">
+                {linksSectionIndex >= 0 ? news.content.slice(0, linksSectionIndex) : news.content}
+              </div>
             </div>
+
+            {/* Link previews */}
+            {linksArray.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-semibold mb-3">Links</h3>
+                <LinkPreview links={linksArray} />
+              </div>
+            )}
 
             {/* Share Section */}
             <div className="border-t pt-6">

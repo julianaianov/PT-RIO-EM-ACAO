@@ -10,8 +10,8 @@ export default function RadioPage() {
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-red-800 mb-2">Rádio PT RJ</h1>
-          <p className="text-red-600">A voz da transformação social no Rio de Janeiro</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Rádio PT RJ</h1>
+          <p className="text-white/90">A voz da transformação social no Rio de Janeiro</p>
         </div>
 
         {/* Live Radio Player */}

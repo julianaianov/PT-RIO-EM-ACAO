@@ -4,9 +4,8 @@ import QuickMenu from "@/components/quick-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Newspaper, Users, TrendingUp, Award, Radio, LogOut } from "lucide-react"
+import { Calendar, Newspaper, Users, Award, Radio } from "lucide-react"
 import Link from "next/link"
-import { signOut } from "@/lib/actions"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -57,37 +56,27 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        {/* Header with user info */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-lg font-bold">PT</span>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-red-800">PT RJ</h1>
-              <p className="text-gray-600">Bem-vindo, {profile?.full_name || user.email}</p>
-            </div>
-          </div>
-          
-          <form action={signOut}>
-            <Button variant="outline" type="submit" className="border-red-600 text-red-600 hover:bg-red-50">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
-          </form>
-        </div>
+        {/* Header removido para evitar duplicidade com a barra de menu */}
 
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            Plataforma Digital do PT RJ
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Plataforma Digital PT RJ EM AÇÃO
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-white max-w-2xl mx-auto">
             Acesse notícias, eventos, formação política e muito mais para fortalecer 
             nossa luta por uma sociedade mais justa e igualitária.
           </p>
+        </div>
+
+        {/* Banner */}
+        <div className="mb-6 md:mb-8">
+          <div className="relative overflow-hidden rounded-xl shadow-lg bg-red-600">
+            <img src="/lula.png" alt="Banner Lula" className="w-full h-40 sm:h-56 md:h-80 object-contain object-center" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/10 to-transparent" />
+          </div>
         </div>
 
         {/* Quick Menu */}
@@ -178,13 +167,128 @@ export default async function HomePage() {
           </Card>
         </div>
 
-        {/* Footer */}
-        <div className="mt-16 text-center text-gray-500">
-          <p className="text-sm">
-            © 2024 Partido dos Trabalhadores - Rio de Janeiro. 
-            Construindo uma sociedade mais justa e igualitária.
-          </p>
+        {/* Portais Governamentais */}
+        <div className="mt-8">
+          <Card className="border-red-200 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-white" />
+                Portais Governamentais para o Cidadão
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 bg-white/70">
+              <div>
+                <h3 className="font-semibold mb-2 text-red-800">Portais Federais</h3>
+                <ul className="list-disc ml-6 space-y-2 text-gray-700">
+                  <li>
+                    <span className="font-medium">Gov.br</span> – Serviços e informações do Governo Federal em um único lugar.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Acesso.gov.br</span> – Login unificado com CPF para diversos serviços.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://acesso.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Portal da Transparência</span> – Gastos, contratos e recursos públicos.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://portaldatransparencia.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Dados Abertos (dados.gov.br)</span> – Bases de dados públicas.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://dados.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Agência Gov (EBC)</span> – Notícias e coberturas do Governo Federal.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://agenciagov.ebc.com.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Meu SUS Digital</span> – Histórico de saúde do cidadão (vacinas, exames, etc.).
+                  </li>
+                  <li>
+                    <span className="font-medium">Portal Cidadão (Caixa)</span> – Benefícios e serviços sociais.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://cidadao.caixa.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-red-800">Portais Estaduais do RJ</h3>
+                <ul className="list-disc ml-6 space-y-2 text-gray-700">
+                  <li>
+                    <span className="font-medium">Portal do Governo do Estado do Rio de Janeiro</span> – notícias, serviços, transparência e acesso à informação.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.rj.gov.br/" target="_blank" rel="noopener noreferrer">rj.gov.br</a>
+                    </Button>
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.rj.gov.br/cidadao/servicos" target="_blank" rel="noopener noreferrer">Serviços ao Cidadão</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">e-SIC (Serviço de Informação ao Cidadão)</span> – solicitações pela LAI.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.rj.gov.br/servico/acessar-servico-de-informacao-ao-cidadao-1244" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Tribunal de Justiça do RJ – Portal Cidadão</span> – consultas processuais, pautas, débitos e conciliação.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.tjrj.jus.br/cidadao" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Defensoria Pública do RJ</span> – assistência jurídica gratuita.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.defensoria.rj.def.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                  <li>
+                    <span className="font-medium">Detran-RJ</span> – CNH, identificação civil, veículos e infrações.
+                    <Button asChild variant="outline" size="sm" className="ml-2">
+                      <a href="https://www.detran.rj.gov.br/" target="_blank" rel="noopener noreferrer">Acessar</a>
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-red-800">Resumo dos Principais Portais (RJ)</h3>
+                <div className="grid md:grid-cols-2 gap-2 text-sm text-gray-700">
+                  <div className="font-medium">Governo do Estado – Serviços</div>
+                  <div>Centraliza serviços estaduais (benefícios, programas sociais, transparência).</div>
+                  <div className="font-medium">e-SIC (LAI)</div>
+                  <div>Solicitar acesso a documentos e informações públicas.</div>
+                  <div className="font-medium">TJRJ – Portal Cidadão</div>
+                  <div>Processos, débitos, pautas e conciliação.</div>
+                  <div className="font-medium">Defensoria Pública</div>
+                  <div>Atendimento jurídico gratuito.</div>
+                  <div className="font-medium">Detran-RJ</div>
+                  <div>CNH, identificação civil, veículos e infrações.</div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2 text-red-800">PT – Diretórios Estaduais</h3>
+                <Button asChild variant="outline" size="sm">
+                  <a href="https://pt.org.br/diretorios-estaduais/" target="_blank" rel="noopener noreferrer">pt.org.br/diretorios-estaduais</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Footer */}
+       
       </div>
     </div>
   )

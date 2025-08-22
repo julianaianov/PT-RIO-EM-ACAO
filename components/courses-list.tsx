@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Clock, Star, Play, BookOpen, CheckCircle } from "lucide-react"
+import { Clock, Star, Play, BookOpen, CheckCircle, FileText, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 
 interface Course {
@@ -14,11 +14,15 @@ interface Course {
   difficulty: string
   category: string
   video_url: string | null
+  // Optional hydrated fields from attachments
+  cover_url?: string | null
+  pdfs?: { file_url: string; title?: string }[]
 }
 
 interface CoursesListProps {
   courses: Course[]
   userProgress: any[] | null
+  canManage?: boolean
 }
 
 const categoryLabels = {
@@ -49,7 +53,7 @@ const difficultyColors = {
   advanced: "bg-red-100 text-red-800",
 }
 
-export default function CoursesList({ courses, userProgress }: CoursesListProps) {
+export default function CoursesList({ courses, userProgress, canManage }: CoursesListProps) {
   const getUserProgress = (courseId: string) => {
     return userProgress?.find((p) => p.course_id === courseId)
   }
@@ -74,38 +78,62 @@ export default function CoursesList({ courses, userProgress }: CoursesListProps)
         const progressPercentage = progress?.progress_percentage || 0
 
         return (
-          <Card key={course.id} className="hover:shadow-lg transition-shadow">
+          <Card key={course.id} className="hover:shadow-lg transition-shadow border-red-200 overflow-hidden">
+            {/* Cover */}
+            <div className="relative h-44 md:h-56 bg-muted">
+              {course.cover_url ? (
+                <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <ImageIcon className="h-8 w-8" />
+                </div>
+              )}
+              <div className="absolute top-3 left-3">
+                <Badge className={categoryColors[course.category as keyof typeof categoryColors]}>
+                  {categoryLabels[course.category as keyof typeof categoryLabels]}
+                </Badge>
+              </div>
+              {isCompleted && (
+                <div className="absolute top-3 right-3">
+                  <Badge className="bg-green-100 text-green-800">
+                    <CheckCircle className="h-3 w-3 mr-1" /> Concluído
+                  </Badge>
+                </div>
+              )}
+            </div>
+
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Badge className={categoryColors[course.category as keyof typeof categoryColors]}>
-                    {categoryLabels[course.category as keyof typeof categoryLabels]}
-                  </Badge>
-                  <Badge className={difficultyColors[course.difficulty as keyof typeof difficultyColors]}>
-                    {difficultyLabels[course.difficulty as keyof typeof difficultyLabels]}
-                  </Badge>
-                  {isCompleted && (
-                    <Badge className="bg-green-100 text-green-800">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Concluído
-                    </Badge>
-                  )}
+                <CardTitle className="text-xl text-red-800">{course.title}</CardTitle>
+                <Badge className={difficultyColors[course.difficulty as keyof typeof difficultyColors]}>
+                  {difficultyLabels[course.difficulty as keyof typeof difficultyLabels]}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  {course.duration_minutes} min
                 </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {course.duration_minutes} min
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    {course.points_reward} pts
-                  </div>
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  {course.points_reward} pts
                 </div>
               </div>
-              <CardTitle className="text-xl">{course.title}</CardTitle>
             </CardHeader>
+
             <CardContent>
               <p className="text-muted-foreground mb-4">{course.description}</p>
+
+              {/* PDF Attachments quick actions */}
+              {course.pdfs && course.pdfs.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {course.pdfs.map((p, idx) => (
+                    <a key={idx} href={p.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm px-2 py-1 border rounded hover:bg-red-50">
+                      <FileText className="h-4 w-4 text-red-600" /> Ver/baixar PDF
+                    </a>
+                  ))}
+                </div>
+              )}
 
               {/* Progress Bar */}
               {progress && !isCompleted && (
@@ -134,6 +162,12 @@ export default function CoursesList({ courses, userProgress }: CoursesListProps)
                     )}
                   </Link>
                 </Button>
+
+                {canManage && (
+                  <Button variant="outline" asChild>
+                    <Link href={`/courses/${course.id}/edit`}>Editar</Link>
+                  </Button>
+                )}
 
                 {progress && (
                   <div className="text-sm text-muted-foreground">
