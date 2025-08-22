@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { updateMovement } from "@/lib/movement-actions"
 import BackButton from "@/components/back-button"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { SelectHidden } from "@/components/select-hidden"
 import { movementCategories, movementRegions } from "@/lib/movements-options"
 
 export default async function EditMovementPage({ params }: { params: { id: string } }) {
@@ -43,27 +43,11 @@ export default async function EditMovementPage({ params }: { params: { id: strin
                 </div>
                 <div>
                   <Label htmlFor="category">Categoria</Label>
-                  <input type="hidden" name="category" id="category" defaultValue={movement.category || ""} />
-                  <Select defaultValue={movement.category || undefined} onValueChange={(v) => { const el=document.getElementById('category') as HTMLInputElement; if(el) el.value=v }}>
-                    <SelectTrigger className="w-full"><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      {movementCategories.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SelectHidden name="category" options={movementCategories} defaultValue={movement.category || undefined} />
                 </div>
                 <div>
                   <Label htmlFor="region">Região</Label>
-                  <input type="hidden" name="region" id="region" defaultValue={movement.region || ""} />
-                  <Select defaultValue={movement.region || undefined} onValueChange={(v) => { const el=document.getElementById('region') as HTMLInputElement; if(el) el.value=v }}>
-                    <SelectTrigger className="w-full"><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      {movementRegions.map((r) => (
-                        <SelectItem key={r} value={r}>{r}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SelectHidden name="region" options={movementRegions} defaultValue={movement.region || undefined} />
                 </div>
                 <div>
                   <Label htmlFor="founded">Fundado em</Label>

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { createMovement } from "@/lib/movement-actions"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { SelectHidden } from "@/components/select-hidden"
 import { movementCategories, movementRegions } from "@/lib/movements-options"
 
 export default function CreateMovementPage() {
@@ -24,27 +24,11 @@ export default function CreateMovementPage() {
 								</div>
 								<div>
 									<Label htmlFor="category">Categoria</Label>
-									<input type="hidden" name="category" id="category" />
-									<Select onValueChange={(v) => { const el=document.getElementById('category') as HTMLInputElement; if(el) el.value=v }}> 
-										<SelectTrigger className="w-full"><SelectValue placeholder="Selecione" /></SelectTrigger>
-										<SelectContent>
-											{movementCategories.map((c) => (
-												<SelectItem key={c} value={c}>{c}</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
+									<SelectHidden name="category" options={movementCategories} />
 								</div>
 								<div>
 									<Label htmlFor="region">Região</Label>
-									<input type="hidden" name="region" id="region" />
-									<Select onValueChange={(v) => { const el=document.getElementById('region') as HTMLInputElement; if(el) el.value=v }}>
-										<SelectTrigger className="w-full"><SelectValue placeholder="Selecione" /></SelectTrigger>
-										<SelectContent>
-											{movementRegions.map((r) => (
-												<SelectItem key={r} value={r}>{r}</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
+									<SelectHidden name="region" options={movementRegions} />
 								</div>
 								<div>
 									<Label htmlFor="founded">Fundado em</Label>
