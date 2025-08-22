@@ -42,7 +42,7 @@ const eventTypeColors = {
   course: "bg-green-100 text-green-800",
   protest: "bg-red-100 text-red-800",
   social: "bg-purple-100 text-purple-800",
-  campaign: "bg-orange-100 text-orange-800",
+  campaign: "bg-red-100 text-red-800",
 }
 
 export default function EventsList({ events, user }: EventsListProps) {

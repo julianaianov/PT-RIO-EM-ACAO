@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Phone, Mail, MessageCircle, Send, ArrowLeft, Users } from "lucide-react"
 import Link from "next/link"
+import BackButton from "@/components/back-button"
 
 export default async function NucleoDetailPage({
   params,
@@ -41,14 +42,7 @@ export default async function NucleoDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button variant="ghost" asChild>
-          <Link href="/nucleos">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar para Núcleos
-          </Link>
-        </Button>
-      </div>
+      <div className="mb-6"><BackButton /></div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">

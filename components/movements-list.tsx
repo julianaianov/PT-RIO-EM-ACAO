@@ -1,122 +1,90 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Users, MapPin, Calendar, ExternalLink, MessageCircle, Instagram, Facebook } from "lucide-react"
+import Link from "next/link"
+import { supabase } from "@/lib/supabase/client"
 
-const mockMovements = [
-  {
-    id: 1,
-    name: "Coletivo Feminista Dandara",
-    description:
-      "Movimento feminista popular que atua na zona norte do Rio, promovendo formação política e ações de combate à violência contra a mulher.",
-    category: "Feminista",
-    region: "Zona Norte",
-    members: 150,
-    founded: "2018",
-    contact: {
-      whatsapp: "21999887766",
-      instagram: "@dandara_feminista",
-      facebook: "DandaraFeminista",
-    },
-    nextEvent: "Roda de Conversa - Violência Doméstica",
-    eventDate: "2024-01-20",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 2,
-    name: "Movimento Negro Unificado RJ",
-    description:
-      "Organização histórica do movimento negro brasileiro, atuando na luta antirracista e pela igualdade racial no Rio de Janeiro.",
-    category: "Movimento Negro",
-    region: "Centro",
-    members: 300,
-    founded: "1978",
-    contact: {
-      whatsapp: "21988776655",
-      instagram: "@mnu_rj",
-      facebook: "MNURioDeJaneiro",
-    },
-    nextEvent: "Marcha Contra o Racismo",
-    eventDate: "2024-01-25",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 3,
-    name: "Coletivo LGBTQIA+ Resistência",
-    description:
-      "Coletivo que luta pelos direitos da população LGBTQIA+ no Rio, organizando ações de visibilidade e combate à LGBTfobia.",
-    category: "LGBTQIA+",
-    region: "Zona Sul",
-    members: 80,
-    founded: "2020",
-    contact: {
-      whatsapp: "21977665544",
-      instagram: "@resistencia_lgbtqia",
-      facebook: "ResistenciaLGBTQIA",
-    },
-    nextEvent: "Parada do Orgulho LGBTQIA+",
-    eventDate: "2024-02-15",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 4,
-    name: "Sindicato dos Metalúrgicos RJ",
-    description:
-      "Sindicato que representa os trabalhadores metalúrgicos do Rio de Janeiro, lutando por melhores condições de trabalho e salários dignos.",
-    category: "Sindical",
-    region: "Zona Oeste",
-    members: 2500,
-    founded: "1985",
-    contact: {
-      whatsapp: "21966554433",
-      instagram: "@metalurgicos_rj",
-      facebook: "MetalurgicosRJ",
-    },
-    nextEvent: "Assembleia Geral dos Trabalhadores",
-    eventDate: "2024-01-18",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-]
+interface Movement {
+  id: string
+  name: string
+  description: string
+  category: string | null
+  region: string | null
+  members: number | null
+  founded: string | null
+  contact_whatsapp: string | null
+  contact_instagram: string | null
+  contact_facebook: string | null
+  contact_email: string | null
+  website: string | null
+  image_url: string | null
+}
 
 export function MovementsList() {
-  const joinWhatsApp = (phone: string, movementName: string) => {
-    const message = `Olá! Gostaria de saber mais sobre o ${movementName} e como posso participar.`
-    const whatsappUrl = `https://wa.me/55${phone}?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, "_blank")
+  const [movements, setMovements] = useState<Movement[] | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    ;(async () => {
+      const { data, error } = await supabase
+        .from("movements")
+        .select(
+          "id, name, description, category, region, members, founded, contact_whatsapp, contact_instagram, contact_facebook, contact_email, website, image_url"
+        )
+        .order("created_at", { ascending: false })
+      if (isMounted) {
+        if (error) {
+          setMovements([])
+        } else {
+          setMovements(data as unknown as Movement[])
+        }
+        setLoading(false)
+      }
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const formatWhatsAppLink = (phone?: string | null, movementName?: string) => {
+    if (!phone) return null
+    const sanitized = phone.replace(/[^0-9]/g, "")
+    const message = `Olá! Gostaria de saber mais sobre o ${movementName || "movimento"} e como posso participar.`
+    return `https://wa.me/55${sanitized}?text=${encodeURIComponent(message)}`
   }
 
-  const openSocialMedia = (platform: string, handle: string) => {
-    let url = ""
-    switch (platform) {
-      case "instagram":
-        url = `https://instagram.com/${handle.replace("@", "")}`
-        break
-      case "facebook":
-        url = `https://facebook.com/${handle}`
-        break
-    }
-    window.open(url, "_blank")
+  if (loading) {
+    return <div className="text-sm text-gray-600">Carregando movimentos...</div>
+  }
+
+  if (!movements || movements.length === 0) {
+    return <div className="text-sm text-gray-600">Nenhum movimento cadastrado ainda.</div>
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-red-800">{mockMovements.length} movimentos encontrados</h2>
+        <h2 className="text-xl font-semibold text-red-800">{movements.length} movimentos encontrados</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {mockMovements.map((movement) => (
+        {movements.map((movement) => (
           <Card key={movement.id} className="hover:shadow-lg transition-shadow border-red-200">
             <CardContent className="p-0">
               <div className="relative">
                 <img
-                  src={movement.image || "/placeholder.svg"}
+                  src={movement.image_url || "/placeholder.svg"}
                   alt={movement.name}
                   className="w-full h-48 object-cover rounded-t-lg"
                 />
-                <Badge className="absolute top-3 left-3 bg-red-600">{movement.category}</Badge>
+                {movement.category && (
+                  <Badge className="absolute top-3 left-3 bg-red-600">{movement.category}</Badge>
+                )}
               </div>
 
               <div className="p-6">
@@ -124,48 +92,62 @@ export function MovementsList() {
                 <p className="text-sm text-gray-600 mb-4 line-clamp-3">{movement.description}</p>
 
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <MapPin className="h-4 w-4" />
-                    {movement.region}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Users className="h-4 w-4" />
-                    {movement.members} membros • Fundado em {movement.founded}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    Próximo: {movement.nextEvent}
-                  </div>
+                  {movement.region && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin className="h-4 w-4" />
+                      {movement.region}
+                    </div>
+                  )}
+                  {(movement.members || movement.founded) && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Users className="h-4 w-4" />
+                      {movement.members ? `${movement.members} membros` : null}
+                      {movement.members && movement.founded ? " • " : null}
+                      {movement.founded ? `Fundado em ${movement.founded}` : null}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => joinWhatsApp(movement.contact.whatsapp, movement.name)}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <MessageCircle className="h-3 w-3 mr-1" />
-                      WhatsApp
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openSocialMedia("instagram", movement.contact.instagram)}
-                    >
-                      <Instagram className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openSocialMedia("facebook", movement.contact.facebook)}
-                    >
-                      <Facebook className="h-3 w-3" />
-                    </Button>
+                    {formatWhatsAppLink(movement.contact_whatsapp, movement.name) && (
+                      <Button size="sm" asChild className="bg-green-600 hover:bg-green-700">
+                        <a
+                          href={formatWhatsAppLink(movement.contact_whatsapp, movement.name) as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MessageCircle className="h-3 w-3 mr-1" /> WhatsApp
+                        </a>
+                      </Button>
+                    )}
+                    {movement.contact_instagram && (
+                      <Button variant="outline" size="sm" asChild>
+                        <a
+                          href={`https://instagram.com/${movement.contact_instagram.replace("@", "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Instagram className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    )}
+                    {movement.contact_facebook && (
+                      <Button variant="outline" size="sm" asChild>
+                        <a
+                          href={`https://facebook.com/${movement.contact_facebook}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Facebook className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    )}
                   </div>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Ver Mais
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/movements/${movement.id}`}>
+                      <ExternalLink className="h-3 w-3 mr-1" /> Ver Mais
+                    </Link>
                   </Button>
                 </div>
               </div>

@@ -59,7 +59,7 @@ export function GoalsProgress() {
   const getCategoryColor = (category: string) => {
     const colors = {
       Governança: "bg-purple-100 text-purple-800",
-      Comunicação: "bg-orange-100 text-orange-800",
+      Comunicação: "bg-red-100 text-red-800",
       Educação: "bg-green-100 text-green-800",
       Organização: "bg-blue-100 text-blue-800",
     }
@@ -134,7 +134,7 @@ export function GoalsProgress() {
               <div className="text-xs text-gray-600">Quase Concluída</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-orange-600">3</div>
+              <div className="text-lg font-bold text-red-600">3</div>
               <div className="text-xs text-gray-600">Em Andamento</div>
             </div>
             <div>

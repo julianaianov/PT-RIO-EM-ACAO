@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { Clock, Star, ArrowLeft, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import CourseContent from "@/components/course-content"
+import BackButton from "@/components/back-button"
 
 export default async function CourseDetailPage({
   params,
@@ -28,7 +29,8 @@ export default async function CourseDetailPage({
   }
 
   // Get user progress if logged in
-  let userProgress = null
+  let userProgress = null as any
+  let role: string | null = null
   if (user) {
     const { data: progress } = await supabase
       .from("course_progress")
@@ -37,6 +39,9 @@ export default async function CourseDetailPage({
       .eq("course_id", course.id)
       .single()
     userProgress = progress
+
+    const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+    role = me?.role || null
   }
 
   const categoryLabels = {
@@ -69,14 +74,7 @@ export default async function CourseDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button variant="ghost" asChild>
-          <Link href="/courses">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar para Cursos
-          </Link>
-        </Button>
-      </div>
+      <div className="mb-6"><BackButton /></div>
 
       <div className="grid lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
@@ -97,16 +95,11 @@ export default async function CourseDetailPage({
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {course.duration_minutes} min
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    {course.points_reward} pts
-                  </div>
-                </div>
+                {role && ["admin", "coordinator"].includes(role) && (
+                  <Button asChild className="bg-red-600 hover:bg-red-700">
+                    <Link href={`/courses/${params.id}/edit`}>Editar</Link>
+                  </Button>
+                )}
               </div>
 
               <CardTitle className="text-3xl mb-4">{course.title}</CardTitle>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, Users, Clock, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import EventActions from "@/components/event-actions"
+import BackButton from "@/components/back-button"
 
 export default async function EventDetailPage({
   params,
@@ -58,19 +59,12 @@ export default async function EventDetailPage({
     course: "bg-green-100 text-green-800",
     protest: "bg-red-100 text-red-800",
     social: "bg-purple-100 text-purple-800",
-    campaign: "bg-orange-100 text-orange-800",
+    campaign: "bg-red-100 text-red-800",
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button variant="ghost" asChild>
-          <Link href="/events">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar para Eventos
-          </Link>
-        </Button>
-      </div>
+      <div className="mb-6"><BackButton /></div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">

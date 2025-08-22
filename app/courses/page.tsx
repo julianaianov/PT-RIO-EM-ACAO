@@ -5,6 +5,7 @@ import UserProgress from "@/components/user-progress"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
+import BackButton from "@/components/back-button"
 
 interface SearchParams {
   category?: string
@@ -28,10 +29,18 @@ export default async function CoursesPage({
   let userProgress: any[] = []
 
   if (user) {
-    const { data: profile } = await supabase.from("profiles").select("role, points").eq("id", user.id).single()
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", user.id)
+      .single()
     userProfile = profile
 
-    const { data: progress } = await supabase.from("course_progress").select("*, courses(title)").eq("user_id", user.id)
+    const { data: progress } = await supabase
+      .from("course_progress")
+      .select("*, courses(title)")
+      .eq("user_id", user.id)
+
     userProgress = progress || []
   }
 
@@ -54,8 +63,31 @@ export default async function CoursesPage({
     console.error("Error fetching courses:", error)
   }
 
+  // Hydrate with attachments (cover image and pdfs)
+  const ids = (courses || []).map((c: any) => c.id)
+  let attachments: any[] = []
+  if (ids.length > 0) {
+    const { data: att } = await supabase
+      .from("course_attachments")
+      .select("course_id,file_url,mime_type,title,is_cover")
+      .in("course_id", ids)
+    attachments = att || []
+  }
+
+  const decorated = (courses || []).map((c: any) => {
+    const att = attachments.filter((a) => a.course_id === c.id)
+    const coverMarked = att.find((a) => a.is_cover === true)
+    const coverFallback = att.find((a) => (a.mime_type || "").startsWith("image/") || (a.file_url || "").match(/\.(png|jpe?g|gif|webp)$/i))
+    const cover = coverMarked || coverFallback
+    const pdfs = att
+      .filter((a) => (a.mime_type || "").includes("pdf") || (a.file_url || "").toLowerCase().endsWith(".pdf"))
+      .map((a) => ({ file_url: a.file_url as string, title: a.title as string | undefined }))
+    return { ...c, cover_url: cover?.file_url || null, pdfs }
+  })
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6"><BackButton /></div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Formação Política</h1>
@@ -79,7 +111,7 @@ export default async function CoursesPage({
           <CoursesFilters />
         </div>
         <div className="lg:col-span-3">
-          <CoursesList courses={courses || []} userProgress={userProgress} />
+          <CoursesList courses={decorated || []} userProgress={userProgress} canManage={userProfile?.role === "admin" || userProfile?.role === "coordinator"} />
         </div>
       </div>
     </div>

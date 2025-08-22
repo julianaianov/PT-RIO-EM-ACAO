@@ -3,6 +3,8 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
+import Navbar from '@/components/navbar'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'PT RJ - Plataforma Digital',
@@ -26,8 +28,11 @@ html {
 }
         `}</style>
       </head>
-      <body>
+      <body className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828]">
+        {/* Global Navbar */}
+        <Navbar />
         {children}
+        <Footer />
         <Toaster />
       </body>
     </html>

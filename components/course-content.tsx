@@ -20,6 +20,22 @@ export default function CourseContent({ course, user, userProgress }: CourseCont
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  // Quiz state
+  const [answers, setAnswers] = useState<Record<string, string | undefined>>({})
+  const [feedback, setFeedback] = useState<Record<string, "correct" | "wrong" | undefined>>({})
+  const correctAnswers: Record<string, string> = { q1: "a", q2: "a" }
+
+  const handleAnswer = (q: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [q]: value }))
+    const isCorrect = value === correctAnswers[q]
+    setFeedback((prev) => ({ ...prev, [q]: isCorrect ? "correct" : "wrong" }))
+    toast({
+      title: isCorrect ? "Correto!" : "Resposta incorreta",
+      description: isCorrect ? "Boa! Continue." : "Tente novamente.",
+      variant: isCorrect ? ("success" as any) : "destructive",
+    })
+  }
+
   const markAsCompleted = async () => {
     if (!user) {
       toast({
@@ -140,36 +156,46 @@ export default function CourseContent({ course, user, userProgress }: CourseCont
               <h4 className="font-semibold mb-2">1. Qual é o principal objetivo do PT?</h4>
               <div className="space-y-2">
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q1" value="a" />
+                  <input type="radio" name="q1" value="a" checked={answers.q1 === "a"} onChange={() => handleAnswer("q1", "a")} />
                   <span>Defender os interesses dos trabalhadores</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q1" value="b" />
+                  <input type="radio" name="q1" value="b" checked={answers.q1 === "b"} onChange={() => handleAnswer("q1", "b")} />
                   <span>Promover o capitalismo</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q1" value="c" />
+                  <input type="radio" name="q1" value="c" checked={answers.q1 === "c"} onChange={() => handleAnswer("q1", "c")} />
                   <span>Manter o status quo</span>
                 </label>
               </div>
+              {feedback.q1 && (
+                <div className={`mt-2 text-sm ${feedback.q1 === "correct" ? "text-green-600" : "text-red-600"}`}>
+                  {feedback.q1 === "correct" ? "Resposta correta!" : "Resposta incorreta. Tente novamente."}
+                </div>
+              )}
             </div>
 
             <div>
               <h4 className="font-semibold mb-2">2. Em que ano foi fundado o PT?</h4>
               <div className="space-y-2">
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q2" value="a" />
+                  <input type="radio" name="q2" value="a" checked={answers.q2 === "a"} onChange={() => handleAnswer("q2", "a")} />
                   <span>1980</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q2" value="b" />
+                  <input type="radio" name="q2" value="b" checked={answers.q2 === "b"} onChange={() => handleAnswer("q2", "b")} />
                   <span>1982</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input type="radio" name="q2" value="c" />
+                  <input type="radio" name="q2" value="c" checked={answers.q2 === "c"} onChange={() => handleAnswer("q2", "c")} />
                   <span>1985</span>
                 </label>
               </div>
+              {feedback.q2 && (
+                <div className={`mt-2 text-sm ${feedback.q2 === "correct" ? "text-green-600" : "text-red-600"}`}>
+                  {feedback.q2 === "correct" ? "Resposta correta!" : "Resposta incorreta. Tente novamente."}
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
