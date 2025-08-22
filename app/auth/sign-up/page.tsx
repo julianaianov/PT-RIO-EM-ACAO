@@ -37,7 +37,7 @@ export default async function SignUpPage({
               Voltar ao início
             </Link>
             <div className="flex items-center justify-center gap-3 mb-4">
-              <img src="/logo-pt.png" alt="PT RJ" className="w-16 h-16 md:w-20 md:h-20 object-contain" />
+              <img src="/logo-pt.png" alt="PT RJ" className="w-24 h-24 md:w-28 md:h-28 object-contain" />
             </div>
             <p className="text-gray-600">Junte-se à nossa luta</p>
           </div>
