@@ -60,7 +60,7 @@ export default async function EventsPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <Button variant="ghost" asChild>
+        <Button variant="ghost" asChild className="text-white hover:bg-white/10">
           <Link href="/">
             <ArrowLeft className="h-4 w-4 mr-2" /> Voltar
           </Link>
@@ -69,8 +69,8 @@ export default async function EventsPage({
 
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Agenda de Eventos</h1>
-          <p className="text-muted-foreground">Participe dos eventos do PT RJ e ajude a construir a mudança</p>
+          <h1 className="text-4xl font-bold mb-2 text-white">Agenda de Eventos</h1>
+          <p className="text-white/90">Participe dos eventos do PT RJ e ajude a construir a mudança</p>
         </div>
 
         {userProfile?.role === "coordinator" || userProfile?.role === "admin" ? (

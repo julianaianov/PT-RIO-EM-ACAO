@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Calendar, Newspaper, BookOpen, MapPin, Radio, Users, Zap, Trophy } from "lucide-react"
+import { Calendar, Newspaper, BookOpen, MapPin, Radio, Users, Zap, Trophy, Star, Share2 } from "lucide-react"
 
 const menuItems = [
   { name: "Agenda", href: "/events", icon: Calendar, color: "bg-red-500" },
@@ -9,7 +9,9 @@ const menuItems = [
   { name: "Rádio PT", href: "/radio", icon: Radio, color: "bg-red-600" },
   { name: "Movimentos", href: "/movements", icon: Users, color: "bg-teal-500" },
   { name: "Juventude", href: "/youth", icon: Zap, color: "bg-pink-500" },
-  { name: "Ranking", href: "/ranking", icon: Trophy, color: "bg-yellow-500" },
+  { name: "Pontos", href: "/points", icon: Star, color: "bg-yellow-500" },
+  { name: "Ranking", href: "/ranking", icon: Trophy, color: "bg-amber-500" },
+  { name: "Compartilhar", href: "/share", icon: Share2, color: "bg-red-500" },
 ]
 
 export default function QuickMenu() {

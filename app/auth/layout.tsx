@@ -10,12 +10,10 @@ export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
-      <body className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828]">
-        <style>{`nav.sticky{display:none !important;}`}</style>
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <div className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828]">
+      <style>{`nav.sticky{display:none !important;}`}</style>
+      {children}
+      <Toaster />
+    </div>
   )
 } 
