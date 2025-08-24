@@ -127,7 +127,7 @@ export default async function MovementDetailPage({ params }: { params: { id: str
                     <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                       <MessageCircle className="h-4 w-4 mr-2" /> WhatsApp
                     </a>
-                  </Button>
+                </Button>
                 )}
                 <div className="grid grid-cols-2 gap-2">
                   {movement.contact_instagram && (
@@ -135,14 +135,14 @@ export default async function MovementDetailPage({ params }: { params: { id: str
                       <a href={`https://instagram.com/${movement.contact_instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer">
                         <Instagram className="h-3 w-3 mr-1" /> Instagram
                       </a>
-                    </Button>
+                  </Button>
                   )}
                   {movement.contact_facebook && (
                     <Button variant="outline" size="sm" asChild className="w-full">
                       <a href={`https://facebook.com/${movement.contact_facebook}`} target="_blank" rel="noopener noreferrer">
                         <Facebook className="h-3 w-3 mr-1" /> Facebook
                       </a>
-                    </Button>
+                  </Button>
                   )}
                 </div>
                 {movement.contact_email && (

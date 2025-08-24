@@ -61,7 +61,7 @@ export default function NewsList({ news }: NewsListProps) {
       {/* Featured News */}
       {featuredNews.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Destaques</h2>
+          <h2 className="text-2xl font-bold mb-4 text-white">Destaques</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {featuredNews.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -122,7 +122,7 @@ export default function NewsList({ news }: NewsListProps) {
       {/* Regular News */}
       {regularNews.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Todas as Notícias</h2>
+          <h2 className="text-2xl font-bold mb-4 text-white">Todas as Notícias</h2>
           <div className="space-y-6">
             {regularNews.map((item) => (
               <Card key={item.id} className="hover:shadow-lg transition-shadow">

@@ -58,15 +58,15 @@ export default async function NewsPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6"><BackButton /></div>
+      <div className="mb-6"><BackButton className="text-white hover:bg-white/10" /></div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Notícias e Comunicação</h1>
-          <p className="text-muted-foreground">Fique por dentro das últimas novidades do PT RJ</p>
+          <h1 className="text-4xl font-bold mb-2 text-white">Notícias e Comunicação</h1>
+          <p className="text-white/90">Fique por dentro das últimas novidades do PT RJ</p>
         </div>
 
         {userProfile?.role === "coordinator" || userProfile?.role === "admin" ? (
-          <Button asChild>
+          <Button asChild className="bg-red-600 hover:bg-red-700">
             <Link href="/news/create">
               <Plus className="h-4 w-4 mr-2" />
               Nova Publicação

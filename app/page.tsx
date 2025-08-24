@@ -4,7 +4,7 @@ import QuickMenu from "@/components/quick-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Newspaper, Users, Award, Radio } from "lucide-react"
+import { Calendar, Newspaper, Users, Award, Radio, Trophy } from "lucide-react"
 import Link from "next/link"
 
 export default async function HomePage() {
@@ -25,14 +25,16 @@ export default async function HomePage() {
   let newsCount = 0
   let eventsCount = 0
   let coursesCount = 0
+  let myPoints = 0
 
   try {
     const { data: profileData } = await supabase
       .from("profiles")
-      .select("full_name, role")
+      .select("full_name, role, points")
       .eq("id", user.id)
       .single()
     profile = profileData
+    myPoints = Number(profileData?.points || 0)
 
     const { data: newsData } = await supabase
       .from("news")
@@ -83,7 +85,7 @@ export default async function HomePage() {
         <QuickMenu />
 
         {/* Stats Section */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-4 gap-6 mb-12">
           <Card className="border-red-200 hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
@@ -126,6 +128,22 @@ export default async function HomePage() {
                 {coursesCount}
               </div>
               <p className="text-sm text-gray-600">Cursos disponíveis</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200 hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-red-600" />
+                <CardTitle className="text-lg">Pontos</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-red-600 mb-2">{myPoints}</div>
+              <p className="text-sm text-gray-600">Veja o ranking em Pontos</p>
+              <Button asChild size="sm" className="mt-2 bg-red-600 hover:bg-red-700">
+                <Link href="/points">Abrir</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>

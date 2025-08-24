@@ -237,10 +237,10 @@ export default async function YouthPage() {
                     <div key={index} className="p-3 bg-white rounded-lg">
                       <h4 className="font-semibold text-sm text-gray-800">{op.title}</h4>
                       <p className="text-xs text-gray-600">{op.description}</p>
-                      <Badge variant="secondary" className="mt-1 text-xs">
+                    <Badge variant="secondary" className="mt-1 text-xs">
                         {op.opportunity_type}{op.deadline ? ` • até ${new Date(op.deadline).toLocaleDateString('pt-BR')}` : ''}
-                      </Badge>
-                    </div>
+                    </Badge>
+                  </div>
                   ))}
                   {(!opportunities || opportunities.length === 0) && (
                     <div className="text-sm text-gray-600">Nenhuma oportunidade disponível.</div>
