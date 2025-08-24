@@ -25,6 +25,7 @@ export default async function HomePage() {
   let newsCount = 0
   let eventsCount = 0
   let coursesCount = 0
+  let completedCoursesCount = 0
   let myPoints = 0
 
   try {
@@ -53,6 +54,14 @@ export default async function HomePage() {
       .select("id", { count: "exact" })
       .eq("active", true)
     coursesCount = coursesData?.length || 0
+
+    // Buscar cursos concluídos pelo usuário
+    const { data: userProgressData } = await supabase
+      .from("course_progress")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("completed", true)
+    completedCoursesCount = userProgressData?.length || 0
   } catch (error) {
     console.log("Supabase query error", error)
   }
@@ -125,9 +134,9 @@ export default async function HomePage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-red-600 mb-2">
-                {coursesCount}
+                {completedCoursesCount}
               </div>
-              <p className="text-sm text-gray-600">Cursos disponíveis</p>
+              <p className="text-sm text-gray-600">Cursos concluídos</p>
             </CardContent>
           </Card>
 
