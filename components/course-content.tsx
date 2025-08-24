@@ -217,11 +217,11 @@ export default function CourseContent({ course, user, userProgress, quizQuestion
         .from("course_progress")
         .upsert(
           {
-            user_id: user.id,
-            course_id: course.id,
-            completed: true,
-            progress_percentage: 100,
-            completed_at: new Date().toISOString(),
+        user_id: user.id,
+        course_id: course.id,
+        completed: true,
+        progress_percentage: 100,
+        completed_at: new Date().toISOString(),
           },
           { onConflict: "user_id,course_id" }
         )
@@ -234,10 +234,10 @@ export default function CourseContent({ course, user, userProgress, quizQuestion
 
       // Update user points (only once)
       try {
-        const { error: pointsError } = await supabase.rpc("update_user_points", {
-          user_id: user.id,
-          points_to_add: course.points_reward,
-        })
+      const { error: pointsError } = await supabase.rpc("update_user_points", {
+        user_id: user.id,
+        points_to_add: course.points_reward,
+      })
 
         if (pointsError) {
           console.warn("Non-fatal: error updating user points:", pointsError)
@@ -437,7 +437,7 @@ export default function CourseContent({ course, user, userProgress, quizQuestion
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
           )}
         </CardContent>
       </Card>
@@ -460,7 +460,7 @@ export default function CourseContent({ course, user, userProgress, quizQuestion
               {quizQuestions.map((q, idx) => (
                 <div key={q.id || idx}>
                   <h4 className="font-semibold mb-2 text-sm sm:text-base break-words">{idx + 1}. {q.question_text}</h4>
-                  <div className="space-y-2">
+              <div className="space-y-2">
                     {(["a","b","c","d"] as const).map((opt) => {
                       const label = q[`option_${opt}`]
                       if (!label) return null
@@ -469,15 +469,15 @@ export default function CourseContent({ course, user, userProgress, quizQuestion
                         <label key={opt} className="flex items-start space-x-2 text-sm sm:text-base">
                           <input type="radio" name={key} value={opt} checked={answers[key] === opt} onChange={() => handleAnswer(key, opt)} className="mt-0.5" />
                           <span className="break-words">{label}</span>
-                        </label>
+                </label>
                       )
                     })}
-                  </div>
+              </div>
                   {feedback[`q${idx + 1}`] && (
                     <div className={`mt-2 text-xs sm:text-sm ${feedback[`q${idx + 1}`] === "correct" ? "text-green-600" : "text-red-600"}`}>
                       {feedback[`q${idx + 1}`] === "correct" ? "Resposta correta!" : "Resposta incorreta. Tente novamente."}
-                    </div>
-                  )}
+                </div>
+              )}
                 </div>
               ))}
             </div>

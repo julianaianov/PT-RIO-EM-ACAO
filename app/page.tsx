@@ -4,8 +4,9 @@ import QuickMenu from "@/components/quick-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Newspaper, Users, Award, Radio, Trophy } from "lucide-react"
+import { Calendar, Newspaper, Users, Award, Radio, Trophy, Share2 } from "lucide-react"
 import Link from "next/link"
+import ShareHub from "@/components/share-hub"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -27,6 +28,7 @@ export default async function HomePage() {
   let coursesCount = 0
   let completedCoursesCount = 0
   let myPoints = 0
+  let shareLinks: any[] = []
 
   try {
     const { data: profileData } = await supabase
@@ -62,6 +64,14 @@ export default async function HomePage() {
       .eq("user_id", user.id)
       .eq("completed", true)
     completedCoursesCount = userProgressData?.length || 0
+
+    // Buscar links de compartilhamento
+    const { data: shareLinksData } = await supabase
+      .from("share_links")
+      .select("id, label, path, message, icon, color, order_index, active")
+      .eq("active", true)
+      .order("order_index", { ascending: true })
+    shareLinks = shareLinksData || []
   } catch (error) {
     console.log("Supabase query error", error)
   }
@@ -192,6 +202,11 @@ export default async function HomePage() {
               </Button>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Card de Compartilhamento */}
+        <div className="mt-8 mb-8">
+          <ShareHub links={shareLinks} />
         </div>
 
         {/* Portais Governamentais */}

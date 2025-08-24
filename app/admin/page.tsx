@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Users, Calendar, Newspaper, BookOpen, MapPin, Radio, Zap, Trophy } from "lucide-react"
+import { Users, Calendar, Newspaper, BookOpen, MapPin, Radio, Zap, Trophy, Share2 } from "lucide-react"
 import BackButton from "@/components/back-button"
 
 export default async function AdminDashboardPage() {
@@ -27,6 +27,7 @@ export default async function AdminDashboardPage() {
     { title: "Movimentos", href: "/movements", icon: Users, desc: "Ações e movimentos" },
     { title: "Juventude", href: "/admin/youth", icon: Zap, desc: "Conteúdos da juventude" },
     { title: "Pontos", href: "/points", icon: Trophy, desc: "Sistema de pontos" },
+    { title: "Compartilhar", href: "/admin/share-links", icon: Share2, desc: "Gestão de links de compartilhamento" },
   ]
 
   return (

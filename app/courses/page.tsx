@@ -90,8 +90,8 @@ export default async function CoursesPage({
       <div className="mb-3 sm:mb-4 md:mb-6"><BackButton /></div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 md:mb-6 lg:mb-8 gap-2 sm:gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">Formação Política</h1>
-          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">Desenvolva seus conhecimentos políticos e sociais</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 text-white">Formação Política</h1>
+          <p className="text-xs sm:text-sm md:text-base text-white">Desenvolva seus conhecimentos políticos e sociais</p>
         </div>
 
         {userProfile?.role === "coordinator" || userProfile?.role === "admin" ? (

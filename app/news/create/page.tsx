@@ -33,7 +33,7 @@ export default async function CreateNewsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <Button variant="ghost" asChild>
+        <Button variant="ghost" asChild className="text-white hover:bg-white/10">
           <Link href="/news">
             <ArrowLeft className="h-4 w-4 mr-2" /> Voltar para Notícias
           </Link>

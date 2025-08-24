@@ -40,7 +40,7 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
 
   return (
     <div className="mb-4 sm:mb-6 md:mb-8">
-      <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Seu Progresso</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-white">Seu Progresso</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -66,7 +66,7 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
           </CardHeader>
           <CardContent className="pt-0">
             <div className="text-lg sm:text-2xl font-bold">{completedCourses}</div>
-            <p className="text-xs sm:text-sm text-muted-foreground">de {totalCourses} iniciados</p>
+            <p className="text-xs sm:text-sm text-white">de {totalCourses} iniciados</p>
           </CardContent>
         </Card>
 
@@ -104,12 +104,12 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
             </div>
             {nextLevel && (
               <div className="mt-2 space-y-1">
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-xs text-white">
                   <span>{totalPoints} pts</span>
                   <span>{nextLevel.minPoints} pts</span>
                 </div>
                 <Progress value={progressToNext} className="h-2" />
-                <p className="text-xs text-muted-foreground">{nextLevel.minPoints - totalPoints} pontos restantes</p>
+                <p className="text-xs text-white">{nextLevel.minPoints - totalPoints} pontos restantes</p>
               </div>
             )}
           </CardContent>

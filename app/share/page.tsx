@@ -3,9 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import BackButton from "@/components/back-button"
 import Link from "next/link"
+import ShareHub from "@/components/share-hub"
 
 export default async function SharePage() {
   const supabase = await createClient()
+  
+  // Buscar links de compartilhamento gerenciados pelo admin
+  const { data: shareLinks } = await supabase
+    .from("share_links")
+    .select("id, label, path, message, icon, color, order_index, active")
+    .eq("active", true)
+    .order("order_index", { ascending: true })
+  
+  // Buscar conteúdos para compartilhar (mantido para compatibilidade)
   const { data: items } = await supabase
     .from("share_items")
     .select("id, title, summary, image_url, target_url")
@@ -18,9 +28,19 @@ export default async function SharePage() {
         <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
           <CardTitle>Conteúdos para Compartilhar</CardTitle>
         </CardHeader>
-        <CardContent className="p-4 bg-white/70 space-y-4">
+        <CardContent className="p-4 bg-white/70 space-y-6">
           <p className="text-sm text-gray-700">Veja conteúdos já publicados e compartilhe nas suas redes.</p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+          
+          {/* Links de Compartilhamento Gerenciados pelo Admin */}
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-4">Links da Plataforma</h3>
+            <ShareHub links={shareLinks || []} />
+          </div>
+          
+          {/* Conteúdos para Compartilhar */}
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-4">Conteúdos Específicos</h3>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {(items || []).map((n) => (
               <div key={n.id} className="border rounded-lg bg-white">
                 {n.image_url ? (
@@ -51,7 +71,8 @@ export default async function SharePage() {
                 </div>
               </div>
             ))}
-            {(!items || items.length === 0) && <div className="text-sm text-gray-600">Sem conteúdos publicados ainda.</div>}
+            {(!items || items.length === 0) && <div className="text-sm text-gray-600">Sem conteúdos específicos publicados ainda.</div>}
+            </div>
           </div>
         </CardContent>
       </Card>

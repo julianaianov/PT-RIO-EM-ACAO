@@ -60,12 +60,8 @@ export default async function YouthPage() {
               Espaço Juventude PT RJ
             </h1>
           </div>
-          <p className="text-lg text-white mb-6">O futuro da transformação social está nas mãos da juventude</p>
+          <p className="text-lg text-black mb-6">O futuro da transformação social está nas mãos da juventude</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
-              <Users className="h-4 w-4 mr-2" />
-              Participar da Rede
-            </Button>
             <Button variant="outline" className="border-red-600 text-red-600 bg-transparent hover:bg-gradient-to-r hover:from-red-600 hover:to-red-700 hover:text-white hover:border-transparent">
               <Calendar className="h-4 w-4 mr-2" />
               Ver Eventos
