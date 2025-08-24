@@ -201,3 +201,43 @@ export async function updateCourse(formData: FormData) {
 
   redirect(`/courses/${course_id}`)
 } 
+
+export async function updateCourseQuiz(formData: FormData) {
+  const supabase = await createActionClient()
+  const user = await requireCoordinator(supabase as any)
+
+  const course_id = String(formData.get("course_id") || "")
+  if (!course_id) redirect("/courses?error=Curso inválido")
+
+  // Parse questions array from JSON
+  const questionsRaw = String(formData.get("questions_json") || "[]")
+  let questions: any[] = []
+  try {
+    questions = JSON.parse(questionsRaw)
+  } catch (e) {
+    redirect(`/courses/${course_id}/edit?error=Quiz inválido`)
+  }
+
+  // Remove existing and re-insert simple approach
+  await supabase.from("course_quiz_questions").delete().eq("course_id", course_id)
+
+  if (Array.isArray(questions) && questions.length > 0) {
+    const rows = questions
+      .filter((q) => q && q.question_text && q.correct_option)
+      .map((q, idx) => ({
+        course_id,
+        question_text: String(q.question_text),
+        option_a: String(q.option_a || ""),
+        option_b: String(q.option_b || ""),
+        option_c: q.option_c ? String(q.option_c) : null,
+        option_d: q.option_d ? String(q.option_d) : null,
+        correct_option: String(q.correct_option),
+        sort_order: Number(q.sort_order ?? idx),
+      }))
+    if (rows.length > 0) {
+      await supabase.from("course_quiz_questions").insert(rows as any)
+    }
+  }
+
+  redirect(`/courses/${course_id}/edit?message=Quiz atualizado`)
+}

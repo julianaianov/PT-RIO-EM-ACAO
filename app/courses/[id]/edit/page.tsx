@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { updateCourse } from "@/lib/course-actions"
+import { updateCourse, updateCourseQuiz } from "@/lib/course-actions"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import CoverUploader from "@/components/cover-uploader"
+import QuizEditor from "@/components/quiz-editor"
 
 export default async function EditCoursePage({ params }: { params: { id: string } }) {
   const supabase = await createClient()
@@ -23,6 +24,11 @@ export default async function EditCoursePage({ params }: { params: { id: string 
 
   const { data: links } = await supabase.from("course_links").select("url, title").eq("course_id", params.id)
   const { data: files } = await supabase.from("course_attachments").select("file_url, title, mime_type, size_bytes").eq("course_id", params.id)
+  const { data: quiz } = await supabase
+    .from("course_quiz_questions")
+    .select("id, question_text, option_a, option_b, option_c, option_d, correct_option, sort_order")
+    .eq("course_id", params.id)
+    .order("sort_order", { ascending: true })
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -133,6 +139,11 @@ export default async function EditCoursePage({ params }: { params: { id: string 
           </form>
         </CardContent>
       </Card>
+
+      {/* Quiz Editor */}
+      <div className="mt-8">
+        <QuizEditor courseId={params.id} initialQuestions={quiz || []} action={updateCourseQuiz} />
+      </div>
     </div>
   )
 } 

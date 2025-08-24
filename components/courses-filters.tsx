@@ -60,9 +60,9 @@ export default function CoursesFilters() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle>Filtros</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Filtros</CardTitle>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearAllFilters}>
               Limpar
@@ -70,11 +70,16 @@ export default function CoursesFilters() {
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4">
         {/* Search */}
         <form onSubmit={handleSearch}>
           <div className="flex gap-2">
-            <Input placeholder="Buscar cursos..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <Input 
+              placeholder="Buscar cursos..." 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="text-sm sm:text-base"
+            />
             <Button type="submit" size="sm">
               <Search className="h-4 w-4" />
             </Button>
@@ -87,19 +92,19 @@ export default function CoursesFilters() {
             <p className="text-sm font-medium">Filtros ativos:</p>
             <div className="flex flex-wrap gap-2">
               {currentCategory && (
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
                   {categories.find((c) => c.value === currentCategory)?.label}
                   <X className="h-3 w-3 cursor-pointer" onClick={() => updateFilter("category", null)} />
                 </Badge>
               )}
               {currentDifficulty && (
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
                   {difficulties.find((d) => d.value === currentDifficulty)?.label}
                   <X className="h-3 w-3 cursor-pointer" onClick={() => updateFilter("difficulty", null)} />
                 </Badge>
               )}
               {currentSearch && (
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
                   "{currentSearch}"
                   <X className="h-3 w-3 cursor-pointer" onClick={() => updateFilter("search", null)} />
                 </Badge>
@@ -112,7 +117,7 @@ export default function CoursesFilters() {
         <div>
           <label className="text-sm font-medium mb-2 block">Categoria</label>
           <Select value={currentCategory || "all"} onValueChange={(value) => updateFilter("category", value || null)}>
-            <SelectTrigger>
+            <SelectTrigger className="text-sm sm:text-base">
               <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
@@ -133,7 +138,7 @@ export default function CoursesFilters() {
             value={currentDifficulty || "all"}
             onValueChange={(value) => updateFilter("difficulty", value || null)}
           >
-            <SelectTrigger>
+            <SelectTrigger className="text-sm sm:text-base">
               <SelectValue placeholder="Todas as dificuldades" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +159,7 @@ export default function CoursesFilters() {
             <Button
               variant="ghost"
               size="sm"
-              className="w-full justify-start"
+              className="w-full justify-start text-xs sm:text-sm h-8 sm:h-9"
               onClick={() => updateFilter("category", "history")}
             >
               📚 História do PT
@@ -162,7 +167,7 @@ export default function CoursesFilters() {
             <Button
               variant="ghost"
               size="sm"
-              className="w-full justify-start"
+              className="w-full justify-start text-xs sm:text-sm h-8 sm:h-9"
               onClick={() => updateFilter("category", "politics")}
             >
               🏛️ Política Brasileira
@@ -170,7 +175,7 @@ export default function CoursesFilters() {
             <Button
               variant="ghost"
               size="sm"
-              className="w-full justify-start"
+              className="w-full justify-start text-xs sm:text-sm h-8 sm:h-9"
               onClick={() => updateFilter("difficulty", "beginner")}
             >
               🌱 Para Iniciantes
