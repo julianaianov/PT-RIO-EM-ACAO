@@ -86,16 +86,16 @@ export default async function CoursesPage({
   })
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6"><BackButton /></div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 md:py-8 min-h-screen">
+      <div className="mb-3 sm:mb-4 md:mb-6"><BackButton /></div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 md:mb-6 lg:mb-8 gap-2 sm:gap-3">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Formação Política</h1>
-          <p className="text-muted-foreground">Desenvolva seus conhecimentos políticos e sociais</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">Formação Política</h1>
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">Desenvolva seus conhecimentos políticos e sociais</p>
         </div>
 
         {userProfile?.role === "coordinator" || userProfile?.role === "admin" ? (
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto text-sm">
             <Link href="/courses/create">
               <Plus className="h-4 w-4 mr-2" />
               Novo Curso
@@ -106,7 +106,14 @@ export default async function CoursesPage({
 
       {user && <UserProgress userProfile={userProfile} userProgress={userProgress} />}
 
-      <div className="grid lg:grid-cols-4 gap-8">
+      {/* Mobile: Filters first, then list */}
+      <div className="block lg:hidden space-y-3 sm:space-y-4">
+        <CoursesFilters />
+        <CoursesList courses={decorated || []} userProgress={userProgress} canManage={userProfile?.role === "admin" || userProfile?.role === "coordinator"} />
+      </div>
+
+      {/* Desktop: Sidebar layout */}
+      <div className="hidden lg:grid lg:grid-cols-4 gap-6 md:gap-8">
         <div className="lg:col-span-1">
           <CoursesFilters />
         </div>

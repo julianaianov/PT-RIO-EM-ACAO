@@ -28,10 +28,12 @@ html {
 }
         `}</style>
       </head>
-      <body className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828]">
+      <body className="min-h-screen bg-gradient-to-r from-[#B71C1C] via-[#E53935] to-[#C62828] overflow-x-hidden">
         {/* Global Navbar */}
         <Navbar />
-        {children}
+        <div className="min-w-0 w-full mx-auto max-w-[100vw]">
+          {children}
+        </div>
         <Footer />
         <Toaster />
       </body>

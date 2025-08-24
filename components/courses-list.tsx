@@ -80,13 +80,11 @@ export default function CoursesList({ courses, userProgress, canManage }: Course
         return (
           <Card key={course.id} className="hover:shadow-lg transition-shadow border-red-200 overflow-hidden">
             {/* Cover */}
-            <div className="relative h-44 md:h-56 bg-muted">
+            <div className="relative h-40 sm:h-44 md:h-56 bg-muted">
               {course.cover_url ? (
                 <img src={course.cover_url} alt={course.title} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <ImageIcon className="h-8 w-8" />
-                </div>
+                <img src="/CIDADANIA.jpg" alt={course.title} className="w-full h-full object-cover" />
               )}
               <div className="absolute top-3 left-3">
                 <Badge className={categoryColors[course.category as keyof typeof categoryColors]}>
@@ -104,12 +102,12 @@ export default function CoursesList({ courses, userProgress, canManage }: Course
 
             <CardHeader>
               <div className="flex items-start justify-between">
-                <CardTitle className="text-xl text-red-800">{course.title}</CardTitle>
+                <CardTitle className="text-lg sm:text-xl text-red-800 leading-snug">{course.title}</CardTitle>
                 <Badge className={difficultyColors[course.difficulty as keyof typeof difficultyColors]}>
                   {difficultyLabels[course.difficulty as keyof typeof difficultyLabels]}
                 </Badge>
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-3 text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
                   {course.duration_minutes} min
@@ -122,7 +120,7 @@ export default function CoursesList({ courses, userProgress, canManage }: Course
             </CardHeader>
 
             <CardContent>
-              <p className="text-muted-foreground mb-4">{course.description}</p>
+              <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">{course.description}</p>
 
               {/* PDF Attachments quick actions */}
               {course.pdfs && course.pdfs.length > 0 && (
@@ -146,7 +144,7 @@ export default function CoursesList({ courses, userProgress, canManage }: Course
                 </div>
               )}
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <Button asChild>
                   <Link href={`/courses/${course.id}`}>
                     {course.video_url ? (
@@ -164,7 +162,7 @@ export default function CoursesList({ courses, userProgress, canManage }: Course
                 </Button>
 
                 {canManage && (
-                  <Button variant="outline" asChild>
+                  <Button variant="outline" size="sm" asChild>
                     <Link href={`/courses/${course.id}/edit`}>Editar</Link>
                   </Button>
                 )}

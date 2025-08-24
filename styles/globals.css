@@ -118,6 +118,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden min-w-0;
+  }
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  .container, .mx-auto, .container > * {
+    min-width: 0;
   }
 }

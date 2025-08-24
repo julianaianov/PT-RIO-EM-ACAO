@@ -39,19 +39,19 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
     : 100
 
   return (
-    <div className="mb-8">
-      <h2 className="text-2xl font-bold mb-4">Seu Progresso</h2>
-      <div className="grid md:grid-cols-4 gap-4">
+    <div className="mb-4 sm:mb-6 md:mb-8">
+      <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Seu Progresso</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+              <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500" />
               Pontos
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalPoints}</div>
-            <Badge className="bg-red-100 text-red-800">
+          <CardContent className="pt-0">
+            <div className="text-lg sm:text-2xl font-bold">{totalPoints}</div>
+            <Badge className="bg-red-100 text-red-800 text-xs">
               {currentLevel.icon} {currentLevel.title}
             </Badge>
           </CardContent>
@@ -59,26 +59,26 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-blue-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
               Cursos
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedCourses}</div>
-            <p className="text-sm text-muted-foreground">de {totalCourses} iniciados</p>
+          <CardContent className="pt-0">
+            <div className="text-lg sm:text-2xl font-bold">{completedCourses}</div>
+            <p className="text-xs sm:text-sm text-muted-foreground">de {totalCourses} iniciados</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-orange-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+              <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500" />
               Taxa de Conclusão
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="pt-0">
+            <div className="text-lg sm:text-2xl font-bold">
               {totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0}%
             </div>
             <Progress value={totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0} className="mt-2" />
@@ -87,16 +87,16 @@ export default function UserProgress({ userProfile, userProgress }: UserProgress
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Target className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+              <Target className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
               Próxima Meta
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-sm">
+          <CardContent className="pt-0">
+            <div className="text-xs sm:text-sm">
               {nextLevel ? (
                 <span>
-                  {nextLevel.icon} {nextLevel.title} ({nextLevel.minPoints} pts)
+                  {nextLevel.icon} {currentLevel.title} ({nextLevel.minPoints} pts)
                 </span>
               ) : (
                 <span>🎉 Nível máximo alcançado!</span>
