@@ -70,18 +70,18 @@ export default async function YouthEventDetailPage({ params, searchParams }: { p
                 const supa = await createClient()
                 const { data: auth } = await supa.auth.getUser()
                 if (!auth.user) redirect(`/auth/login?error=Login necessário&next=/youth/events/${params.id}`)
-                await supa.from("youth_event_attendees").insert({ event_id: params.id, user_id: auth.user.id })
+                await supa.from("youth_event_attendees").insert({ event_id: params.id, user_id: auth.user.id, confirmed: false })
                 redirect(`/youth/events/${params.id}?message=Inscrição confirmada`)
               }}>
-                <Button className="bg-red-600 hover:bg-red-700">Participar</Button>
+                <Button className="bg-red-600 hover:bg-red-700">Inscrever-se</Button>
               </form>
             ) : (
-              <Button disabled variant="outline" className="border-red-600 text-red-600">Você já está confirmado</Button>
+              <Button disabled variant="outline" className="border-red-600 text-red-600">Você já está inscrito</Button>
             )}
           </div>
 
           <div>
-            <div className="text-sm font-semibold mb-2">Quem vai participar</div>
+            <div className="text-sm font-semibold mb-2">Inscritos</div>
             <div className="flex flex-wrap gap-2">
               {(attendeeRows || []).map((a: any) => (
                 <div key={a.user_id} className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs">
@@ -89,7 +89,7 @@ export default async function YouthEventDetailPage({ params, searchParams }: { p
                 </div>
               ))}
               {(!attendeeRows || attendeeRows.length === 0) && (
-                <div className="text-xs text-gray-600">Seja o primeiro a confirmar presença.</div>
+                <div className="text-xs text-gray-600">Seja o primeiro a se inscrever.</div>
               )}
             </div>
           </div>

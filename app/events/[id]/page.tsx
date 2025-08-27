@@ -3,15 +3,17 @@ import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, Clock, ArrowLeft } from "lucide-react"
+import { Calendar, MapPin, Users, Clock, ArrowLeft, Edit } from "lucide-react"
 import Link from "next/link"
 import EventActions from "@/components/event-actions"
 import BackButton from "@/components/back-button"
 
 export default async function EventDetailPage({
   params,
+  searchParams,
 }: {
   params: { id: string }
+  searchParams: { message?: string; error?: string }
 }) {
   const supabase = await createClient()
 
@@ -42,8 +44,13 @@ export default async function EventDetailPage({
 
   // Check if user is already participating
   let userParticipation = null
+  let canEdit = false
   if (user) {
     userParticipation = event.event_participants?.find((p: any) => p.profiles?.id === user.id)
+    
+    // Check if user can edit (admin or coordinator)
+    const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+    canEdit = !!me && ["admin", "coordinator"].includes(me.role)
   }
 
   const eventTypeLabels = {
@@ -65,6 +72,18 @@ export default async function EventDetailPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6"><BackButton /></div>
+
+      {searchParams.message && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+          <p className="text-green-800">{searchParams.message}</p>
+        </div>
+      )}
+
+      {searchParams.error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-800">{searchParams.error}</p>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
@@ -135,7 +154,17 @@ export default async function EventDetailPage({
                 </div>
               )}
 
-              <EventActions event={event} user={user} userParticipation={userParticipation} />
+              <div className="flex flex-wrap gap-3">
+                {canEdit && (
+                  <Button variant="outline" asChild>
+                    <Link href={`/events/${event.id}/edit`}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar Evento
+                    </Link>
+                  </Button>
+                )}
+                <EventActions event={event} user={user} userParticipation={userParticipation} />
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -143,7 +172,7 @@ export default async function EventDetailPage({
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Participantes Confirmados</CardTitle>
+              <CardTitle>Participantes</CardTitle>
             </CardHeader>
             <CardContent>
               {event.event_participants && event.event_participants.length > 0 ? (
@@ -152,17 +181,31 @@ export default async function EventDetailPage({
                     .filter((p: any) => p.confirmed)
                     .map((participant: any) => (
                       <div key={participant.id} className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-medium text-green-700">
                             {participant.profiles?.full_name?.charAt(0) || "?"}
                           </span>
                         </div>
                         <span className="text-sm">{participant.profiles?.full_name || "Participante"}</span>
+                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">Confirmado</span>
+                      </div>
+                    ))}
+                  {event.event_participants
+                    .filter((p: any) => !p.confirmed)
+                    .map((participant: any) => (
+                      <div key={participant.id} className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-medium text-orange-700">
+                            {participant.profiles?.full_name?.charAt(0) || "?"}
+                          </span>
+                        </div>
+                        <span className="text-sm">{participant.profiles?.full_name || "Participante"}</span>
+                        <span className="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">Aguardando</span>
                       </div>
                     ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">Nenhum participante confirmado ainda.</p>
+                <p className="text-muted-foreground text-sm">Nenhum participante inscrito ainda.</p>
               )}
             </CardContent>
           </Card>

@@ -23,6 +23,10 @@ export async function updateUserRole(formData: FormData) {
   const userId = String(formData.get("user_id") || "")
   const role = String(formData.get("role") || "member")
 
+  if (!userId || !role) {
+    redirect("/admin/users?error=Dados inválidos")
+  }
+
   const supabase = await createActionClient()
 
   // Ensure caller is admin
@@ -34,9 +38,33 @@ export async function updateUserRole(formData: FormData) {
   const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).single()
   if (me?.role !== "admin") redirect("/?error=Acesso negado")
 
-  await supabase.from("profiles").update({ role }).eq("id", userId)
+  // Validar se o role é válido
+  const validRoles = ["member", "coordinator", "admin"]
+  if (!validRoles.includes(role)) {
+    redirect("/admin/users?error=Papel inválido")
+  }
 
-  redirect("/admin/users")
+  // Buscar informações do usuário para mensagem de feedback
+  const { data: targetUser } = await supabase
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", userId)
+    .single()
+
+  const { error } = await supabase.from("profiles").update({ role }).eq("id", userId)
+
+  if (error) {
+    redirect(`/admin/users?error=${encodeURIComponent(error.message)}`)
+  }
+
+  const userName = targetUser?.full_name || targetUser?.email || "Usuário"
+  const roleLabels = {
+    member: "Membro",
+    coordinator: "Coordenador", 
+    admin: "Admin"
+  }
+
+  redirect(`/admin/users?message=${encodeURIComponent(`Papel de ${userName} alterado para ${roleLabels[role as keyof typeof roleLabels]}`)}`)
 } 
 
 export async function createShareItem(formData: FormData) {
