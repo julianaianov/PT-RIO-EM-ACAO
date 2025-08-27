@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, Clock, Share2, ExternalLink } from "lucide-react"
+import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Edit } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { supabase } from "@/lib/supabase/client"
@@ -27,6 +27,7 @@ interface Event {
 interface EventsListProps {
   events: Event[]
   user: any
+  canEdit?: boolean
 }
 
 const eventTypeLabels = {
@@ -45,7 +46,7 @@ const eventTypeColors = {
   campaign: "bg-red-100 text-red-800",
 }
 
-export default function EventsList({ events, user }: EventsListProps) {
+export default function EventsList({ events, user, canEdit = false }: EventsListProps) {
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({})
 
   const confirmPresence = async (eventId: string) => {
@@ -64,7 +65,7 @@ export default function EventsList({ events, user }: EventsListProps) {
       const { error } = await supabase.from("event_participants").insert({
         event_id: eventId,
         user_id: user.id,
-        confirmed: true,
+        confirmed: false, // Inicialmente não confirmado - aguarda confirmação do admin
       })
 
       if (error) {
@@ -80,8 +81,8 @@ export default function EventsList({ events, user }: EventsListProps) {
         }
       } else {
         toast({
-          title: "Presença confirmada!",
-          description: "Sua presença foi confirmada no evento",
+          title: "Inscrição realizada!",
+          description: "Sua inscrição foi registrada. Aguarde confirmação do admin.",
         })
       }
     } catch (error) {
@@ -195,6 +196,15 @@ export default function EventsList({ events, user }: EventsListProps) {
                 <Link href={`/events/${event.id}`}>Ver Detalhes</Link>
               </Button>
 
+              {canEdit && (
+                <Button size="sm" variant="outline" asChild>
+                  <Link href={`/events/${event.id}/edit`}>
+                    <Edit className="h-4 w-4 mr-1" />
+                    Editar
+                  </Link>
+                </Button>
+              )}
+
               <Button
                 size="sm"
                 variant="outline"
@@ -204,7 +214,7 @@ export default function EventsList({ events, user }: EventsListProps) {
                   (!event.max_participants ? false : event.current_participants >= event.max_participants)
                 }
               >
-                {loadingStates[event.id] ? "Confirmando..." : "Confirmar Presença"}
+                {loadingStates[event.id] ? "Inscrevendo..." : "Inscrever-se"}
               </Button>
 
               <Button size="sm" variant="outline" onClick={() => addToGoogleCalendar(event)}>

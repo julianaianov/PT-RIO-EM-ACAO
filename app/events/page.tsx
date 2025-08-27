@@ -25,9 +25,11 @@ export default async function EventsPage({
   } = await supabase.auth.getUser()
 
   let userProfile = null
+  let canEdit = false
   if (user) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
     userProfile = profile
+    canEdit = !!profile && ["admin", "coordinator"].includes(profile.role)
   }
 
   // Build query with filters
@@ -85,7 +87,7 @@ export default async function EventsPage({
           <EventFilters />
         </div>
         <div className="lg:col-span-3">
-          <EventsList events={events || []} user={user} />
+          <EventsList events={events || []} user={user} canEdit={canEdit} />
         </div>
       </div>
     </div>

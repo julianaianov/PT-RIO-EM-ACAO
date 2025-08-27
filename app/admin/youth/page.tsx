@@ -16,6 +16,7 @@ import {
   setYouthGroupActive,
   deleteMentorApplication, deleteMentorshipApplication,
 } from "@/lib/youth-actions"
+import { AdminYouthPresenceManager } from "@/components/admin-youth-presence-manager"
 
 export default async function AdminYouthPage() {
   const supabase = await createClient()
@@ -33,7 +34,7 @@ export default async function AdminYouthPage() {
   const { data: opportunities } = await supabase.from("youth_opportunities").select("id, title, description, org, deadline, opportunity_type, active").order("deadline", { ascending: true })
 
   // Event attendees (for admin visibility)
-  const { data: eventAtt } = await supabase.from("youth_event_attendees").select("event_id, user_id, created_at")
+  const { data: eventAtt } = await supabase.from("youth_event_attendees").select("id, event_id, user_id, confirmed, created_at")
   const attendeeIds = Array.from(new Set((eventAtt || []).map((a: any) => a.user_id)))
   const { data: attendeeProfiles } = attendeeIds.length ? await supabase.from("profiles").select("id, full_name").in("id", attendeeIds) : { data: [] as any[] }
   const userIdToName = new Map<string, string>((attendeeProfiles || []).map((p: any) => [p.id, p.full_name]))
@@ -124,15 +125,12 @@ export default async function AdminYouthPage() {
                 <Input name="active" defaultValue={String(e.active)} />
 
                 <div className="col-span-full text-xs text-gray-700">
-                  <div className="font-medium mb-1">Confirmados ({(eventIdToNames.get(e.id) || []).length})</div>
-                  <div className="flex flex-wrap gap-2">
-                    {(eventIdToNames.get(e.id) || []).map((n, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-red-50 text-red-700 rounded-full">{n}</span>
-                    ))}
-                    {((eventIdToNames.get(e.id) || []).length === 0) && (
-                      <span className="text-gray-500">Nenhum confirmado ainda.</span>
-                    )}
-                  </div>
+                  <div className="font-medium mb-2">Gerenciar Presenças</div>
+                  <AdminYouthPresenceManager 
+                    eventId={e.id}
+                    attendees={(eventAtt || []).filter((a: any) => a.event_id === e.id)}
+                    attendeeNames={userIdToName}
+                  />
                 </div>
 
                 <div className="flex gap-2 justify-end col-span-full">

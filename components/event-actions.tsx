@@ -33,7 +33,7 @@ export default function EventActions({ event, user, userParticipation }: EventAc
       const { error } = await supabase.from("event_participants").insert({
         event_id: event.id,
         user_id: user.id,
-        confirmed: true,
+        confirmed: false, // Inicialmente não confirmado - aguarda confirmação do admin
       })
 
       if (error) {
@@ -48,8 +48,8 @@ export default function EventActions({ event, user, userParticipation }: EventAc
         }
       } else {
         toast({
-          title: "Presença confirmada!",
-          description: "Sua presença foi confirmada no evento",
+          title: "Inscrição realizada!",
+          description: "Sua inscrição foi registrada. Aguarde confirmação do admin.",
         })
         router.refresh()
       }
@@ -128,7 +128,7 @@ export default function EventActions({ event, user, userParticipation }: EventAc
       ) : (
         <Button onClick={confirmPresence} disabled={loading || isEventFull}>
           <UserCheck className="h-4 w-4 mr-2" />
-          {loading ? "Confirmando..." : isEventFull ? "Evento Lotado" : "Confirmar Presença"}
+          {loading ? "Inscrevendo..." : isEventFull ? "Evento Lotado" : "Inscrever-se"}
         </Button>
       )}
 

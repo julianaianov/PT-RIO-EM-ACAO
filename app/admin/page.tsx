@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Users, Calendar, Newspaper, BookOpen, MapPin, Radio, Zap, Trophy, Share2 } from "lucide-react"
+import { Users, Calendar, Newspaper, BookOpen, MapPin, Radio, Zap, Trophy, Share2, CheckCircle } from "lucide-react"
 import BackButton from "@/components/back-button"
 
 export default async function AdminDashboardPage() {
@@ -19,6 +19,7 @@ export default async function AdminDashboardPage() {
 
   const cards = [
     { title: "Usuários", href: "/admin/users", icon: Users, desc: "Gerencie papéis e acessos" },
+    { title: "Presenças", href: "/admin/events", icon: CheckCircle, desc: "Confirmar presenças em eventos" },
     { title: "Agenda", href: "/events", icon: Calendar, desc: "Criar/editar eventos" },
     { title: "Notícias", href: "/news", icon: Newspaper, desc: "Criar/editar publicações" },
     { title: "Formação", href: "/courses", icon: BookOpen, desc: "Gerir cursos e conteúdos" },

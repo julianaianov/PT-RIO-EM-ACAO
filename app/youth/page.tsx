@@ -134,13 +134,13 @@ export default async function YouthPage() {
                         if (!auth.user) {
                           return redirect(`/auth/login?error=Login necessário&next=/youth/events/${(featuredEvent as any).id}`)
                         }
-                        await supa.from("youth_event_attendees").insert({ event_id: (featuredEvent as any).id, user_id: auth.user.id })
+                        await supa.from("youth_event_attendees").insert({ event_id: (featuredEvent as any).id, user_id: auth.user.id, confirmed: false })
                         return redirect(`/youth/events/${(featuredEvent as any).id}?message=Inscrição confirmada`)
                       }}>
                         <Button size="sm" className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">Inscrever-se</Button>
                       </form>
                     ) : (
-                      <Button size="sm" disabled variant="outline" className="border-red-600 text-red-600">Você já está confirmado</Button>
+                      <Button size="sm" disabled variant="outline" className="border-red-600 text-red-600">Você já está inscrito</Button>
                     )
                   ) : (
                     <Button size="sm" disabled variant="outline" className="border-red-600 text-red-600">Sem evento</Button>
